@@ -46,7 +46,7 @@ struct vector_queue
 	{}
 	constexpr explicit vector_queue(const Alloc& alloc) noexcept : array{}, _size{}, _capacity{}, start{}, alloc{ alloc }
 	{}
-	vector_queue(std::initializer_list<T> values, const Alloc& alloc = Alloc()) : _size{}, _capacity(values.size()), start{}, alloc(alloc)
+	vector_queue(std::initializer_list<T> values, const Alloc& alloc = Alloc()) : _size{}, _capacity(round_up(values.size())), start{}, alloc(alloc)
 	{
 		array = this->alloc.allocate(values.size());
 		for (auto& val : values)
@@ -490,8 +490,8 @@ private:
 		//round up to nearest power of two
 		constexpr auto bits = sizeof(size_t) * CHAR_BIT;
 		size_t power = bits - std::countl_zero(number) - 1;
-		if ((1 << power) != number)
-			return 1 << (power + 1);
+		if ((1ULL << power) != number)
+			return 1ULL << (power + 1);
 		else
 			return number;
 	}
